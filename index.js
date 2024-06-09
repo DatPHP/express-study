@@ -3,7 +3,10 @@ var app = express();
 app.use(express.static('public'));
 var path = require('path');
 var fs = require("fs");
+// mongodb://localhost:27017/
+const { MongoClient } = require('mongodb');
 
+/*
 var mysql = require('mysql');
 var con = mysql.createConnection({
    host: "localhost",
@@ -34,6 +37,45 @@ con.connect(function (err) {
 
    con.end();
 });
+
+*/ 
+
+// mongodb://localhost:27017/
+// Connection URL
+const url = 'mongodb://localhost:27017';
+const client = new MongoClient(url);
+
+
+
+// Database Name
+const dbName = 'myProject';
+
+async function main(){
+
+   const uri = "mongodb://localhost:27017/";
+
+   const client = new MongoClient(uri);
+
+   try {
+      // Connect to the MongoDB cluster
+      await client.connect();
+        
+      await newcollection(client, "mydatabase");
+   } finally {
+      // Close the connection to the MongoDB cluster
+      await client.close();
+   }
+}
+
+main().catch(console.error);
+
+
+async function newcollection (client, dbname){
+   const dbobj = await client.db(dbname);
+   const collection = await dbobj.createCollection("MyCollection");
+   console.log("Collection created");
+   console.log(collection);
+}
 
 var bodyParser = require('body-parser');
 // Create application/x-www-form-urlencoded parser
